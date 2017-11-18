@@ -76,7 +76,7 @@ public class ConnectDB {
 	  ConnectDB conn = new ConnectDB();
 	  Connection connection = conn.initConnection();
 	  
-	 // conn.closeConnection(); 
+	  conn.closeConnection(); 
 	 
   }
 }
