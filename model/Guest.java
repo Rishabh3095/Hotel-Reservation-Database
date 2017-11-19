@@ -7,15 +7,13 @@ public class Guest {
 	private String name;
 	private String address;
 	private String email;
-	private boolean paymentReceived;
 	private String arrivalInfo;
 	
-	public Guest(int gId, int rId, String name, String addr, String email, boolean payment, String arrivalInfo){
+	public Guest(int gId, int rId, String name, String addr, String email, String arrivalInfo){
 		this.gId = gId;
 		this.name = name;
 		this.address = addr;
 		this.email = email;
-		this.paymentReceived = payment;
 		this.arrivalInfo = arrivalInfo;
 	}
 
@@ -57,14 +55,6 @@ public class Guest {
 
 	public void setEmail(String email) {
 		this.email = email;
-	}
-
-	public boolean isPaymentReceived() {
-		return paymentReceived;
-	}
-
-	public void setPaymentReceived(boolean paymentReceived) {
-		this.paymentReceived = paymentReceived;
 	}
 
 	public String getArrivalInfo() {

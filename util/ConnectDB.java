@@ -20,7 +20,7 @@ class DataSourceFactory {
       fis =
           getClass()
               .getResourceAsStream(
-                  "config/db.properties"); // swtiched to InputStream to read db.propertied from  relative path
+                  "../config/db.properties"); // swtiched to InputStream to read db.propertied from  relative path
                                           
       props.load(fis);
       mysqlDS = new MysqlDataSource();
