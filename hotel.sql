@@ -8,9 +8,9 @@ DROP TABLE IF EXISTS EMPLOYEE;
 CREATE TABLE EMPLOYEE
 (eID int NOT NULL AUTO_INCREMENT,
 Name VARCHAR(40),
-Admin BOOLEAN DEFAULT FALSE,
+Admin BOOLEAN ,
 Password CHAR(20),
-onDuty BOOLEAN DEFAULT FALSE,
+onDuty BOOLEAN ,
 PRIMARY KEY (eID));
 
 
@@ -18,12 +18,11 @@ DROP TABLE IF EXISTS ROOM;
 
 CREATE TABLE ROOM
 (rID int NOT NULL AUTO_INCREMENT,
-RoomNum int,
+roomNum int UNIQUE,
 Type VARCHAR(20),
 Price float,
 Cleaned BOOLEAN ,
-View VARCHAR(20),
-Smoke BOOLEAN DEFAULT FALSE,
+Smoke BOOLEAN ,
 PRIMARY KEY (rID)
 );
 
@@ -44,7 +43,6 @@ PRIMARY KEY (gID)
 
 
 DROP TABLE IF EXISTS Reservations;
-
 CREATE TABLE Reservations
 (RNum int NOT NULL AUTO_INCREMENT,
 gID int,
@@ -53,12 +51,12 @@ NAME VARCHAR(40),
 PartyCount int,
 checkIn datetime,
 checkOut datetime,
-checkedIn BOOLEAN DEFAULT FALSE,
-checkedOut BOOLEAN DEFAULT FALSE,
+checkedIn BOOLEAN,
+checkedOut BOOLEAN ,
 paymentReceived BOOLEAN DEFAULT FALSE,
 updatedAt timestamp not null on update current_timestamp,
 FOREIGN KEY (roomNum) REFERENCES Room(roomNum) on delete cascade,
-FOREIGN KEY (gID) REFERENCES Guest(gId)on delete cascade,
+FOREIGN KEY (gID) REFERENCES Guest(gId) on delete cascade,
 PRIMARY KEY (RNum,gId,roomNum)
 );
 
@@ -120,10 +118,12 @@ DROP TABLE IF EXISTS Valet;
 CREATE TABLE VALET
 (gID INT,
 Car CHAR(15),
-Requested boolean DEFAULT FALSE,
+Requested boolean,
 parkingNum INT AUTO_INCREMENT,
 FOREIGN KEY (gId) REFERENCES Guest(gId) on delete cascade,
 PRIMARY KEY(parkingNum, gID)
 );
 
-#LOAD DATA LOCAL INFILE './data/employee.txt' INTO TABLE EMPLOYEE(name,orderNumber);
+LOAD DATA LOCAL INFILE '/Users/gurpreet/Documents/workspace/HotelReservationDb/src/data/employees.txt' INTO TABLE EMPLOYEE;
+LOAD DATA LOCAL INFILE '/Users/gurpreet/Documents/workspace/HotelReservationDb/src/data/room.txt' INTO TABLE ROOM;
+
