@@ -11,4 +11,6 @@ To Get Started:
 
 3. Edit `config/db.properties` with your mysql credentials
 
+4. Configure .txt file path in hotel.sql (Add your local path)
+
 
