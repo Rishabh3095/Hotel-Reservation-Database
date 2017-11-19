@@ -1,6 +1,7 @@
 SET sql_mode='';
-DROP DATABASE IF EXISTS Hotel;
-CREATE DATABASE Hotel;
+
+DROP SCHEMA IF EXISTS Hotel;
+CREATE SCHEMA Hotel;
 USE Hotel; 
 
 DROP TABLE IF EXISTS EMPLOYEE;
@@ -13,8 +14,8 @@ onDuty BOOLEAN,
 PRIMARY KEY (eID));
 
 
-DROP TABLE IF EXISTS ROOMS;
-CREATE TABLE ROOMS
+DROP TABLE IF EXISTS ROOM;
+CREATE TABLE ROOM
 (rID int NOT NULL AUTO_INCREMENT,
 RoomNum int,
 Type VARCHAR(20),
@@ -26,8 +27,9 @@ PRIMARY KEY (rID)
 );
 
 
-DROP TABLE IF EXISTS GUESTS;
-CREATE TABLE GUESTS
+DROP TABLE IF EXISTS GUEST;
+
+CREATE TABLE GUEST
 (gID int NOT NULL AUTO_INCREMENT,
 rid int,
 NAME VARCHAR(40),
@@ -35,7 +37,7 @@ Address VARCHAR(80),
 Email VARCHAR(30),
 PaymentReceived BOOLEAN,
 ArrivalInfo VARCHAR(40),
-FOREIGN KEY (rid) REFERENCES Rooms(rID) on delete cascade,
+FOREIGN KEY (rid) REFERENCES Room(rID) on delete cascade,
 PRIMARY KEY (gID)
 );
 
@@ -53,11 +55,11 @@ PartyCount int,
 CheckIN datetime,
 CheckOut datetime,
 Comment VARCHAR(40),
-FOREIGN KEY (rid) REFERENCES Rooms(rID) on delete cascade,
-FOREIGN KEY (gID) REFERENCES Guests(gId)on delete cascade,
+updatedAt datetime,
+FOREIGN KEY (rid) REFERENCES Room(rID) on delete cascade,
+FOREIGN KEY (gID) REFERENCES Guest(gId)on delete cascade,
 PRIMARY KEY (RNum,gId,roomNum)
 );
-
 
 
 DROP TABLE IF EXISTS Payment;
@@ -71,6 +73,48 @@ CardNumber VARCHAR(20),
 Expiration VARCHAR(5),
 CVC int,
 AmountDue Float,
-FOREIGN KEY (gId) REFERENCES Guests(gId) on delete cascade,
+FOREIGN KEY (gId) REFERENCES Guest(gId) on delete cascade,
 PRIMARY KEY (pID, RNum)
 );
+
+DROP TABLE IF EXISTS Archive;
+
+CREATE TABLE Archive
+(RNum int NOT NULL,
+gID int,
+rid int,
+roomNum int,
+NAME VARCHAR(40),
+PartyCount int,
+CheckIN datetime,
+CheckOut datetime,
+Comment VARCHAR(40),
+FOREIGN KEY (rid) REFERENCES Room(rID) on delete cascade,
+FOREIGN KEY (gID) REFERENCES Guest(gId)on delete cascade,
+PRIMARY KEY (RNum,gId,roomNum)
+);
+
+
+DROP TABLE IF EXISTS WakeupCall;
+
+CREATE TABLE WakeupCall
+(
+	gID INT,
+	Time varchar(5),
+	FOREIGN KEY (gId) REFERENCES Guest(gId) on delete cascade,
+	PRIMARY KEY(gID)
+);
+
+
+DROP TABLE IF EXISTS Valet;
+
+CREATE TABLE VALET
+(
+gID INT,
+Car CHAR(15),
+Requested boolean,
+parkingNum INT AUTO_INCREMENT,
+FOREIGN KEY (gId) REFERENCES Guest(gId) on delete cascade,
+PRIMARY KEY(parkingNum, gID)
+);
+

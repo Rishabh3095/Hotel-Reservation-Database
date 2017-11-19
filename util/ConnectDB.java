@@ -1,3 +1,4 @@
+package util;
 import com.mysql.jdbc.jdbc2.optional.MysqlDataSource;
 import java.io.IOException;
 import java.io.InputStream;
@@ -7,6 +8,7 @@ import java.util.*;
 import javax.sql.DataSource;
 
 // Source Professor Kim's Lecture Notes
+
 class DataSourceFactory {
   public DataSource getMySQLDataSource() {
 
@@ -64,7 +66,7 @@ public class ConnectDB {
 	  if(connection != null){
 		  try {
 			connection.close();
-			System.out.println("DB connection close! Bye Bye then");
+			System.out.println("DB connection closed! Bye Bye then");
 		} catch (SQLException e) {
 			System.out.println("Error closing database connection!");
 			e.printStackTrace();
@@ -73,10 +75,10 @@ public class ConnectDB {
   }
 
   public static void main(String[] args) {
-	  ConnectDB conn = new ConnectDB();
-	  Connection connection = conn.initConnection();
+	  //ConnectDB conn = new ConnectDB();
+	 // Connection connection = conn.initConnection();
 	  
-	  conn.closeConnection(); 
+	  //conn.closeConnection(); 
 	 
   }
 }
