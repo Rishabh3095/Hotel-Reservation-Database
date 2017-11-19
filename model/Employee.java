@@ -1,12 +1,15 @@
 package model;
 
 public class Employee {
+	private int eId;
+
 	private String name;
 	private boolean isAdmin;
 	private String pass;
 	private boolean onDuty;
 
-	public Employee(String name, boolean isAdmin, String pass, boolean onDuty){
+	public Employee(int eId, String name, boolean isAdmin, String pass, boolean onDuty){
+		this.eId = eId;
 		this.name = name;
 		this.isAdmin = isAdmin;
 		this.pass = pass;
@@ -44,6 +47,14 @@ public class Employee {
 	public void setOnDuty(boolean onDuty) {
 		this.onDuty = onDuty;
 	}
+	public int geteId() {
+		return eId;
+	}
+
+	public void seteId(int eId) {
+		this.eId = eId;
+	}
+
 	
 	
 

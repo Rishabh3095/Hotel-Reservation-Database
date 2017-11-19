@@ -118,7 +118,7 @@ DROP TABLE IF EXISTS Valet;
 CREATE TABLE VALET
 (gID INT,
 Car CHAR(15),
-Requested boolean,
+Requested boolean ,
 parkingNum INT AUTO_INCREMENT,
 FOREIGN KEY (gId) REFERENCES Guest(gId) on delete cascade,
 PRIMARY KEY(parkingNum, gID)

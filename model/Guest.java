@@ -1,5 +1,7 @@
 package model;
 
+import java.sql.Date;
+
 public class Guest {
 	
 	private int gId;
@@ -7,15 +9,38 @@ public class Guest {
 	private String name;
 	private String address;
 	private String email;
-	private String arrivalInfo;
+	private Date checkIn;
+	private Date checkOut;
 	
-	public Guest(int gId, int rId, String name, String addr, String email, String arrivalInfo){
+	public Guest(int gId, int rId, String name, String addr, String email, Date checkIn, Date checkOut){
 		this.gId = gId;
 		this.name = name;
 		this.address = addr;
 		this.email = email;
-		this.arrivalInfo = arrivalInfo;
+		this.checkIn = checkIn;
+		this.checkOut = checkOut;
 	}
+	
+	
+	public Date getCheckIn() {
+		return checkIn;
+	}
+
+
+	public void setCheckIn(Date checkIn) {
+		this.checkIn = checkIn;
+	}
+
+
+	public Date getCheckOut() {
+		return checkOut;
+	}
+
+
+	public void setCheckOut(Date checkOut) {
+		this.checkOut = checkOut;
+	}
+
 
 	public int getgId() {
 		return gId;
@@ -57,12 +82,5 @@ public class Guest {
 		this.email = email;
 	}
 
-	public String getArrivalInfo() {
-		return arrivalInfo;
-	}
-
-	public void setArrivalInfo(String arrivalInfo) {
-		this.arrivalInfo = arrivalInfo;
-	}
 
 }
