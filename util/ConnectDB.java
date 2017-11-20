@@ -53,7 +53,7 @@ public class ConnectDB {
       }
 
       if (connection != null) {
-        System.out.println("You made it, take control your database now!");
+        System.out.println("Connected!");
         return connection;
       } else {
         System.out.println("Failed to make connection!");

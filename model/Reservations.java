@@ -2,6 +2,7 @@ package model;
 import java.util.*;
 import java.io.*;
 
+import java.sql.Date;
 
 public class Reservations {
 	private int reservationNumber;

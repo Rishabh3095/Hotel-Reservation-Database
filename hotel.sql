@@ -35,8 +35,8 @@ rid int,
 NAME VARCHAR(40),
 Address VARCHAR(80),
 Email VARCHAR(30),
-checkIn datetime,
-checkOut datetime,
+checkIn Date,
+checkOut Date,
 FOREIGN KEY (rid) REFERENCES Room(rID) on delete cascade,
 PRIMARY KEY (gID)
 );
@@ -49,14 +49,32 @@ gID int,
 roomNum int,
 NAME VARCHAR(40),
 PartyCount int,
-checkIn datetime,
-checkOut datetime,
+checkIn Date,
+checkOut Date ,
 checkedIn BOOLEAN,
 checkedOut BOOLEAN ,
 paymentReceived BOOLEAN DEFAULT FALSE,
-updatedAt timestamp not null on update current_timestamp,
+updatedAt timestamp not null DEFAULT CURRENT_TIMESTAMP  on update current_timestamp,
 FOREIGN KEY (roomNum) REFERENCES Room(roomNum) on delete cascade,
 FOREIGN KEY (gID) REFERENCES Guest(gId) on delete cascade,
+PRIMARY KEY (RNum,gId,roomNum)
+);
+
+
+DROP TABLE IF EXISTS Archive;
+
+CREATE TABLE Archive
+(RNum int NOT NULL,
+gID int,
+rid int,
+roomNum int,
+NAME VARCHAR(40),
+PartyCount int,
+CheckIN datetime,
+CheckOut datetime,
+updatedAt timestamp,
+FOREIGN KEY (rid) REFERENCES Room(rID) on delete cascade,
+FOREIGN KEY (gID) REFERENCES Guest(gId)on delete cascade,
 PRIMARY KEY (RNum,gId,roomNum)
 );
 
@@ -77,30 +95,7 @@ FOREIGN KEY (RNum) REFERENCES Reservations(RNum) on delete cascade,
 PRIMARY KEY (pID, gId, RNum)
 );
 
-#update payment status in Reservations table after insert in payment table
-CREATE Trigger updatePaymentStatus
-After Insert on Payment
-for each row 
-update Reservations set paymentReceived = TRUE where new.gid = gid;
 
-
-
-DROP TABLE IF EXISTS Archive;
-
-CREATE TABLE Archive
-(RNum int NOT NULL,
-gID int,
-rid int,
-roomNum int,
-NAME VARCHAR(40),
-PartyCount int,
-CheckIN datetime,
-CheckOut datetime,
-Comment VARCHAR(40),
-FOREIGN KEY (rid) REFERENCES Room(rID) on delete cascade,
-FOREIGN KEY (gID) REFERENCES Guest(gId)on delete cascade,
-PRIMARY KEY (RNum,gId,roomNum)
-);
 
 
 DROP TABLE IF EXISTS WakeupCall;
@@ -123,6 +118,39 @@ parkingNum INT AUTO_INCREMENT,
 FOREIGN KEY (gId) REFERENCES Guest(gId) on delete cascade,
 PRIMARY KEY(parkingNum, gID)
 );
+
+
+
+#update payment status in Reservations table after insert in payment table
+CREATE Trigger updatePaymentStatus
+After Insert on Payment
+for each row 
+update Reservations set paymentReceived = TRUE where new.gid = gid;
+
+#delete guest from guest table on cancel booking
+CREATE Trigger deleteGuest
+After Delete on Reservations 
+for each row
+delete from Guest where old.gId = gID;
+
+#remove payment information on cancelling a booking 
+CREATE Trigger deletePayment
+After Delete on Reservations 
+for each row
+delete from Payment where old.gId = gId;
+
+#Procedure to archive data from Reservations table
+DROP PROCEDURE IF EXISTS archiveReservations;
+
+DELIMITER //
+CREATE PROCEDURE archiveReservations(IN lastUpdated timestamp) 
+BEGIN 
+       INSERT INTO Archive (RNum,gID,rid,roomNum,NAME,PartyCount,CheckIN,CheckOut,updatedAt)
+       Select RNum,gID,rid,roomNum,NAME,PartyCount,CheckIN,CheckOut,updatedAt from Reservations where updatedAt <= lastUpdated;
+       Delete from Reservations where updatedAt <= lastUpdated;
+END//
+
+
 
 LOAD DATA LOCAL INFILE '/Users/gurpreet/Documents/workspace/HotelReservationDb/src/data/employees.txt' INTO TABLE EMPLOYEE;
 LOAD DATA LOCAL INFILE '/Users/gurpreet/Documents/workspace/HotelReservationDb/src/data/room.txt' INTO TABLE ROOM;
