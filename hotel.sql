@@ -4,6 +4,7 @@ DROP SCHEMA IF EXISTS Hotel;
 CREATE SCHEMA Hotel;
 USE Hotel; 
 
+
 DROP TABLE IF EXISTS EMPLOYEE;
 CREATE TABLE EMPLOYEE
 (eID int NOT NULL AUTO_INCREMENT,
@@ -23,6 +24,14 @@ Type VARCHAR(20),
 Price float,
 Cleaned BOOLEAN ,
 Smoke BOOLEAN ,
+PRIMARY KEY (rID)
+);
+
+
+DROP TABLE IF EXISTS UNROOM;
+
+CREATE TABLE UNROOM
+(rID int NOT NULL AUTO_INCREMENT,
 PRIMARY KEY (rID)
 );
 
@@ -118,7 +127,6 @@ parkingNum INT AUTO_INCREMENT,
 FOREIGN KEY (gId) REFERENCES Guest(gId) on delete cascade,
 PRIMARY KEY(parkingNum, gID)
 );
-
 
 
 #update payment status in Reservations table after insert in payment table
