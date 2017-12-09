@@ -152,6 +152,6 @@ END//
 
 
 
-LOAD DATA LOCAL INFILE '/Users/gurpreet/Documents/workspace/HotelReservationDb/src/data/employees.txt' INTO TABLE EMPLOYEE;
-LOAD DATA LOCAL INFILE '/Users/gurpreet/Documents/workspace/HotelReservationDb/src/data/room.txt' INTO TABLE ROOM;
+LOAD DATA LOCAL INFILE 'C:\\My Stuff\\Software Projects\\Java\\javaSpace\\HotelReservationDB\\src\\data\\employees.txt' INTO TABLE EMPLOYEE;
+LOAD DATA LOCAL INFILE 'C:\\My Stuff\\Software Projects\\Java\\javaSpace\\HotelReservationDB\\src\\data\\room.txt' INTO TABLE ROOM;
 
