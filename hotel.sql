@@ -66,15 +66,12 @@ DROP TABLE IF EXISTS Archive;
 CREATE TABLE Archive
 (RNum int NOT NULL,
 gID int,
-rid int,
 roomNum int,
 NAME VARCHAR(40),
 PartyCount int,
 CheckIN datetime,
 CheckOut datetime,
 updatedAt timestamp,
-FOREIGN KEY (rid) REFERENCES Room(rID) on delete cascade,
-FOREIGN KEY (gID) REFERENCES Guest(gId)on delete cascade,
 PRIMARY KEY (RNum,gId,roomNum)
 );
 
@@ -145,8 +142,8 @@ DROP PROCEDURE IF EXISTS archiveReservations;
 DELIMITER //
 CREATE PROCEDURE archiveReservations(IN lastUpdated timestamp) 
 BEGIN 
-       INSERT INTO Archive (RNum,gID,rid,roomNum,NAME,PartyCount,CheckIN,CheckOut,updatedAt)
-       Select RNum,gID,rid,roomNum,NAME,PartyCount,CheckIN,CheckOut,updatedAt from Reservations where updatedAt <= lastUpdated;
+       INSERT INTO Archive (RNum,gID, roomNum,NAME,PartyCount,CheckIN,CheckOut,updatedAt)
+       Select RNum,gID,roomNum,NAME,PartyCount,CheckIN,CheckOut,updatedAt from Reservations where updatedAt <= lastUpdated;
        Delete from Reservations where updatedAt <= lastUpdated;
 END//
 

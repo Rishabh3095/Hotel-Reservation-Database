@@ -328,22 +328,40 @@ public class LaunchApp {
     }
   }
 
-  public static void callStoredProcedure(String lastUpdated) throws SQLException {
-//	  System.out.println("\nCalling the procedure getFacultyByName");
-//	  
-//	   CallableStatement cs = connection.prepareCall("{CALL archiveReservations(?)}");
-//	   cs.setTimestamp(1, new java.sql.Timestamp(2017, 12, 19, 12, 23, 33, 33));
-//	   cs.setString(1,"James Sonnier");
-//	   ResultSet rs = cs.executeQuery();
-//	   //printResultSet(rs);
-//
-//	 
-//	   boolean hasResult = cs.execute();
-//	  // if (hasResult){  rs = cs.getResultSet(); printResultSet(rs); }
-//	   
-//	   System.out.println("Faculty who is younger than 50");
-//	   System.out.println(cs.getInt(2));   //prints 3
-//	   System.out.println(cs.getInt("total")); // can get the value by the output parameter name.
+
+  public static void callStoredProcedure(String lastUpdated) throws SQLException, ParseException {
+	   System.out.println("\nArchiving relations from Rervations table");
+	   SimpleDateFormat dateFormatter = new SimpleDateFormat("MM-dd-yyyy");
+
+	   java.util.Date date2 = dateFormatter.parse(lastUpdated);
+	   Date lastUpdatedTimeStamp = new Date(date2.getTime());
+	   
+	   java.sql.Timestamp lastUpdate = new java.sql.Timestamp(lastUpdatedTimeStamp.getTime());
+
+	   CallableStatement cs = connection.prepareCall("{CALL archiveReservations(?)}");
+	   cs.setTimestamp(1, lastUpdate);
+	   
+	  // boolean hasResult = cs.execute();
+	   
+	  /* if(hasResult){
+		   ResultSet rs = cs.executeQuery();
+		   System.out.println("Archived Relations:\n");
+		   System.out.printf(
+			          "%-10s%-30s%-20s%-25s%-25s%n", "Reservation No.", "GuestID", "Name", "CheckIn", "CheckOut");
+		   while(rs.next()){
+			   int resNum = rs.getInt("RNum");
+			   int gId = rs.getInt("gID");
+			   String name = rs.getString("NAME");
+			   java.util.Date checkIn = rs.getDate("CheckIN");
+			   java.util.Date checkOut = rs.getDate("CheckOut");
+		System.out.printf(
+				          "%-10s%-30s%-20s%-25s%-25s%n", resNum+"", gId +"", name, checkIn+"", checkOut+"");
+		
+			   
+		  }
+
+	   }*/
+	   
 
   }
 
@@ -359,7 +377,7 @@ public class LaunchApp {
     connection = connect.initConnection();
     statement = connection.createStatement();
     statement.executeQuery("USE HOTEL");
-     //callStoredProcedure();
+     callStoredProcedure("12-16-2017"); //pass in last updated date to archive relation before that date
 
     System.out.println("Welcome to Hyatt!");
     System.out.println("Please select a number for the corresponding option or enter q to quit:");
