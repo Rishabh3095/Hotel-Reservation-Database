@@ -365,11 +365,59 @@ public class LaunchApp {
 
   }
 
-  public static void manageBooking() {}
+  //public static void manageBooking() {}
 
-  public static void checkIn() {}
+  public static void checkIn() throws SQLException {
+	  	System.out.println("Please enter your reservation number to check in!");
+	  	int resNum = in.nextInt();
+	  	
+	  	
+	  	PreparedStatement pstmt = null;
+	    
+	    int result = 0;
+	    try {
+	      String getInfo = "Update Reservations SET checkedIn = true where rNum = ?";
 
-  public static void checkOut() {}
+	      pstmt = connection.prepareStatement(getInfo);
+	      pstmt.setInt(1, resNum);
+
+	      result = pstmt.executeUpdate();
+	      
+	      String msg = result == 1? "Check in successful": "Check in failed!";
+	      System.out.println(msg);
+
+	    } catch (SQLException e) {
+	      e.printStackTrace();
+	    } finally {
+	      pstmt.close();
+	    }
+  }
+
+  public static void checkOut() throws SQLException {
+	  System.out.println("Please enter your reservation number to check out!");
+	  	int resNum = in.nextInt();
+	  	
+	  	
+	  	PreparedStatement pstmt = null;
+	    
+	    int result = 0;
+	    try {
+	      String getInfo = "Update Reservations SET checkedOut = true where rNum = ?";
+
+	      pstmt = connection.prepareStatement(getInfo);
+	      pstmt.setInt(1, resNum);
+
+	      result = pstmt.executeUpdate();
+	      
+	      String msg = result == 1? "Check out successful": "Check out failed!";
+	      System.out.println(msg);
+
+	    } catch (SQLException e) {
+	      e.printStackTrace();
+	    } finally {
+	      pstmt.close();
+	    }
+  }
 
   public static void main(String[] args) throws SQLException, InterruptedException, ParseException {
     ConnectDB connect = new ConnectDB();
@@ -411,7 +459,7 @@ public class LaunchApp {
         } else if (selection == 2) {
           cancelBooking();
         } else if (selection == 3) {
-          manageBooking();
+         // manageBooking();
         } else if (selection == 4) {
           searchRoom();
         } else if (selection == 5) {
