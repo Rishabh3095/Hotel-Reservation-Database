@@ -114,9 +114,18 @@ public class LaunchApp {
   }
 
   public static void reserveRoom() throws SQLException, InterruptedException, ParseException {
+	boolean validRoom = false;
+    HashSet<Integer> availableRooms = getAvailableRooms();
     System.out.println("Please select a room from the list below to proceed:");
-    getAvailableRooms();
     int roomNum = Integer.parseInt(in.nextLine().trim());
+    while(!validRoom){
+    if(!availableRooms.contains(roomNum)){
+    	System.out.println("Please select a room from the available list! \n The room you selected is not available");
+    	roomNum = Integer.parseInt(in.nextLine().trim());
+    	}else{
+    		validRoom = true;
+    	}
+    }
     int rId = roomNum;
     System.out.println("Please enter your details:");
     System.out.println("Name:");
@@ -142,7 +151,7 @@ public class LaunchApp {
     System.out.println("Check Out Date (MM-DD-YYYY)");
     String checkOut = in.nextLine();
     java.util.Date date2 = dateFormatter.parse(checkOut);
-    Date checkOutDate = new Date(date.getTime());
+    Date checkOutDate = new Date(date2.getTime());
 
     Guest guest =
         new Guest(
@@ -190,33 +199,38 @@ public class LaunchApp {
   /*
    * helper method to get all available rooms
    */
-  public static void getAvailableRooms() throws SQLException {
+  public static HashSet<Integer> getAvailableRooms() throws SQLException {
     System.out.println("Populating available rooms...");
 
-    PreparedStatement pstmt = null;
+    //PreparedStatement pstmt = null;
+    HashSet<Integer> set = new HashSet<>();
 
     Statement statement = connection.createStatement();
-    String getRooms = "Select * from Room where rid not in (select rid from Reservations)";
-    ResultSet rs = statement.executeQuery(getRooms);
-    System.out.printf("%-10s%-30s%-20s%-25s%n", "Room No.", "Type", "Price ($/per night)", "Smoke");
-
-    while (rs.next()) {
-      // int id = rs.getInt("rId");
-      int rNum = rs.getInt("roomNum");
-      String type = rs.getString("Type");
-      float price = rs.getFloat("price");
-      //  boolean cleaned = rs.getBoolean("cleaned");
-      boolean smoke = rs.getBoolean("smoke");
-      System.out.printf("%-10s%-30s%-20s%-25s%n", rNum + "", type + "", price + "", smoke + "");
-    }
+    String getRooms = "Select * from Room where roomNum not in (select roomNum from Reservations)";
+    
     try {
+    	ResultSet rs = statement.executeQuery(getRooms);
+        System.out.printf("%-10s%-30s%-20s%-25s%n", "Room No.", "Type", "Price ($/per night)", "Smoke");
+        
+        
+        while (rs.next()) {
+          // int id = rs.getInt("rId");
+          int rNum = rs.getInt("roomNum");
+          set.add(rNum);
+          String type = rs.getString("Type");
+          float price = rs.getFloat("price");
+          //  boolean cleaned = rs.getBoolean("cleaned");
+          boolean smoke = rs.getBoolean("smoke");
+          System.out.printf("%-10s%-30s%-20s%-25s%n", rNum + "", type + "", price + "", smoke + "");
+        }
 
-      preparedStatement = connection.prepareStatement(getRooms);
+     // preparedStatement = connection.prepareStatement(getRooms);
     } catch (SQLException e) {
       e.printStackTrace();
     } finally {
-      preparedStatement.close();
+      
     }
+    return set;
   }
 
   public static String getReservationDetails(int resNum) throws SQLException {
@@ -314,31 +328,23 @@ public class LaunchApp {
     }
   }
 
-  public static void callStoredProcedure() throws SQLException {
-    Statement stmtDrop = connection.createStatement();
+  public static void callStoredProcedure(String lastUpdated) throws SQLException {
+//	  System.out.println("\nCalling the procedure getFacultyByName");
+//	  
+//	   CallableStatement cs = connection.prepareCall("{CALL archiveReservations(?)}");
+//	   cs.setTimestamp(1, new java.sql.Timestamp(2017, 12, 19, 12, 23, 33, 33));
+//	   cs.setString(1,"James Sonnier");
+//	   ResultSet rs = cs.executeQuery();
+//	   //printResultSet(rs);
+//
+//	 
+//	   boolean hasResult = cs.execute();
+//	  // if (hasResult){  rs = cs.getResultSet(); printResultSet(rs); }
+//	   
+//	   System.out.println("Faculty who is younger than 50");
+//	   System.out.println(cs.getInt(2));   //prints 3
+//	   System.out.println(cs.getInt("total")); // can get the value by the output parameter name.
 
-    String dropProcedure = "DROP PROCEDURE IF EXISTS archiveReservations";
-    int dropResult = stmtDrop.executeUpdate(dropProcedure);
-
-    System.out.println("Procedure dropped: " + dropResult);
-    Statement delimiter = connection.createStatement();
-
-    String createProcedure =
-        "DELIMITER //"
-            + "CREATE PROCEDURE archiveReservations(IN lastUpdated timestamp) "
-            + "BEGIN "
-            + "INSERT INTO Archive (RNum,gID,rid,roomNum,NAME,PartyCount,CheckIN,CheckOut,updatedAt) "
-            + " Select RNum,gID,rid,roomNum,NAME,PartyCount,CheckIN,CheckOut,updatedAt from Reservations where updatedAt <= lastUpdated;"
-            + " Delete from Reservations where updatedAt <= lastUpdated;"
-            + "END //";
-    try {
-      int result = statement.executeUpdate(createProcedure);
-      String msg =
-          result == 1 ? "Procedure successfully created!" : "Procedure could not be defined";
-      System.out.println(msg);
-    } catch (SQLException e) {
-      e.printStackTrace();
-    }
   }
 
   public static void manageBooking() {}
@@ -353,7 +359,7 @@ public class LaunchApp {
     connection = connect.initConnection();
     statement = connection.createStatement();
     statement.executeQuery("USE HOTEL");
-    // callStoredProcedure();
+     //callStoredProcedure();
 
     System.out.println("Welcome to Hyatt!");
     System.out.println("Please select a number for the corresponding option or enter q to quit:");
