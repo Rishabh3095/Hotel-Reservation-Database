@@ -261,7 +261,9 @@ public class LaunchApp {
 
   public static void cancelBooking() throws SQLException {
     System.out.println("Please enter your reservation number to proceed:");
-    int resNum = in.nextInt();
+
+    String input  = in.nextLine().trim();
+  	int resNum = Integer.parseInt(input);
     PreparedStatement pstmt = null;
     String name = getReservationDetails(resNum);
     try {
@@ -370,7 +372,8 @@ public class LaunchApp {
 
   public static void checkIn() throws SQLException {
 	  	System.out.println("Please enter your reservation number to check in!");
-	  	int resNum = in.nextInt();
+	  	String input  = in.nextLine().trim();
+	  	int resNum = Integer.parseInt(input);
 	  	
 	  	
 	  	PreparedStatement pstmt = null;
@@ -396,8 +399,8 @@ public class LaunchApp {
 
   public static void checkOut() throws SQLException {
 	  System.out.println("Please enter your reservation number to check out!");
-	  	int resNum = in.nextInt();
-	  	
+	  	String input  = in.nextLine().trim();
+	  	int resNum = Integer.parseInt(input);
 	  	
 	  	PreparedStatement pstmt = null;
 	    
@@ -419,28 +422,64 @@ public class LaunchApp {
 	      pstmt.close();
 	    }
   }
+  
+  
+  public static void displayGuestInterface(){
+	  System.out.println("Please select an option from the menu:");
+	  System.out.println("=======================");
+      System.out.println("|1. Book a room        |");
+      System.out.println("|2. Cancel Booking     |");
+      System.out.println("|3. Search Room        |");
+      System.out.println("|4. Check In           |");
+      System.out.println("|5. Check Out          |");
+      System.out.println("|6. Request Valet      |");
+      System.out.println("|7. Request Wakeup     |");
+      System.out.println("|8. Main Menu          |");
+      System.out.println("=======================");
+  }
+  
+  public static void displayEmployeeInterface(){
+	  	  System.out.println("Please select an option from the menu:");
+	      System.out.println("================================");
+	      System.out.println("|1. Current Reservations        |");
+	      System.out.println("|2. Average Room Prices (SALES) |");
+	      System.out.println("|3. Purchase History            |");
+	      System.out.println("|4. Mark Room Unavailable       |");
+	      System.out.println("|5. Available rooms             |");
+	      System.out.println("|6. Add Valet                   |");
+	      System.out.println("|7. Notify Guest (Wake-up call) |");
+	      System.out.println("|8. Main Menu                   |");
+	      System.out.println("================================");
+  }
+  
 
   public static void main(String[] args) throws SQLException, InterruptedException, ParseException {
     ConnectDB connect = new ConnectDB();
     // open a connection
     connection = connect.initConnection();
     statement = connection.createStatement();
+    
+    //instantiate connection for Queries and ValetFunctions
+    Queries.connection = connection;
+    ValetFunctions.connection  = connection;
+    
+    //selecting database to perform queries on
     statement.executeQuery("USE HOTEL");
-     callStoredProcedure("12-16-2017"); //pass in last updated date to archive relation before that date
+    
+    //calling stored procedure to archive reservations older than certain date
+    callStoredProcedure("12-16-2017"); //pass in last updated date to archive relation before that date
 
     System.out.println("Welcome to Hyatt!");
     System.out.println("Please select a number for the corresponding option or enter q to quit:");
     while (true) {
-      System.out.println("====================");
-      System.out.println("|1. Book a room    |");
-      System.out.println("|2. Cancel Booking |");
-      System.out.println("|3. Manage Booking |");
-      System.out.println("|4. Search Room    |");
-      System.out.println("|5. Check In       |");
-      System.out.println("|6. Check Out      |");
-      System.out.println("====================");
+      System.out.println("================================");
+      System.out.println("| 1. Guest    2. Employee/Admin |");
+      System.out.println("================================");
 
-      int selection = 0;
+      boolean guest = false;
+      boolean employee = false;
+      
+      int selection = 0; //initialize selection to prevent null pointer exception
       String option = in.nextLine().trim();
 
       if (option.equals("q") || option.equals("q")) {
@@ -448,6 +487,7 @@ public class LaunchApp {
         break;
       }
       try {
+    	  
         selection = Integer.parseInt(option);
       } catch (NumberFormatException e) {
         System.out.println("Invalid option! Please select a valid option!");
@@ -456,17 +496,80 @@ public class LaunchApp {
       // dispatch request based on selection
       if (selection != 0) {
         if (selection == 1) {
-          reserveRoom();
+            guest = true;
+            int guestChoice = 0;
+            while(guest){
+                displayGuestInterface();
+            	String choice = in.nextLine().trim();
+            	//parsing use input //handling invalid input format exception
+            	try {
+                    guestChoice = Integer.parseInt(choice);
+                  } catch (NumberFormatException e) {
+                    System.out.println("Invalid option! Please select a valid option!");
+                    continue;
+                  }
+            	
+            	//process the options = dispatch functions based on selected option
+            	
+            	if(guestChoice == 1){
+            		reserveRoom();
+            	}else if(guestChoice == 2){
+            		cancelBooking();
+            	}else if(guestChoice == 3){
+            		searchRoom();
+            	}else if(guestChoice == 4){
+            		checkIn();
+            	}else if(guestChoice == 5){
+            		checkOut();
+            	}else if(guestChoice == 6){
+            		//request valet
+            	}else if(guestChoice == 7){
+            		//request wake up call
+            	}else if(guestChoice == 8){
+            		guest = false; //exit guest view, goes back to main menu
+            	}else{
+            		System.out.println("Not a valid option");
+            	}
+       
+            }
         } else if (selection == 2) {
-          cancelBooking();
-        } else if (selection == 3) {
-         // manageBooking();
-        } else if (selection == 4) {
-          searchRoom();
-        } else if (selection == 5) {
-          checkIn();
-        } else if (selection == 6) {
-          checkOut();
+        	employee = true;
+             int empChoice = 0;
+             while(employee){
+                 displayEmployeeInterface();
+             	String choice = in.nextLine().trim();
+             	//parsing use input //handling invalid input format exception
+             	try {
+             		empChoice = Integer.parseInt(choice);
+                   } catch (NumberFormatException e) {
+                     System.out.println("Invalid option! Please select a valid option!");
+                     continue;
+                   }
+             	
+             	
+             	//process the options = dispatch functions based on selected option
+             	
+             	if(empChoice == 1){
+             		// ValetFunctions.viewBookings();
+             	}else if(empChoice == 2){
+             		// Queries.averageRoomPrice();
+             	}else if(empChoice == 3){
+             		// Queries.guestInfo();
+             	}else if(empChoice == 4){
+             		// Queries.markRoomUnav();
+             	}else if(empChoice == 5){
+             		getAvailableRooms();
+             	}else if(empChoice == 6){
+             		// ValetFunctions.carValet();
+             	}else if(empChoice == 7){
+             		// ValetFunctions.wakeUpCall();
+             	}else if(empChoice == 8){
+             		employee = false; //exit employee view, goes back to main menu
+             	}else{
+             		System.out.println("Not a valid option");
+             	}
+        
+             }
         } else {
           System.out.println("Invalid option! Please choose a valid option from the menu below");
         }
@@ -474,186 +577,10 @@ public class LaunchApp {
             "Please select a number for the corresponding option or enter q to quit:");
       }
     }
-
     in.close();
 
     connect.closeConnection();
   }
-  
-  	public static void wakeUpGuests() throws SQLException 
-	{
-		DateFormat dateFormat = new SimpleDateFormat("HH:mm");
-		Calendar cal = Calendar.getInstance();
-		String time = dateFormat.format(cal.getTime());
 
-		String sql = "DELETE FROM wakeupcall Where Time = ?";
-
-		PreparedStatement pstmt = null;
-		int result = 0;
-
-		try {
-			pstmt = connection.prepareStatement(sql);
-			pstmt.setString(1, time);
-			result = pstmt.executeUpdate();
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} finally {
-			pstmt.close();
-		}
-
-		String msg = result == 1 ? "Wake up calls have been issued" : "Something went wrong please try again";
-		System.out.println(msg);
-
-
-
-
-	}
-
-	public static void viewBookings() throws SQLException {
-		String sql = "SELECT Guest.Name, roomNum, partyCount, " + 
-				"checkedIn, paymentReceived,  " + 
-				"Reservations.checkOut from Reservations LEFT OUTER JOIN Guest ON Reservations.gID " 
-				+ "= Guest.gID where Reservations.checkedIn = true";
-		ResultSet rs = null;
-		Statement statement = null;
-		try {
-			 statement = connection.createStatement();
-			 rs = statement.executeQuery(sql);
-			System.out.printf("%-15s%-30s%-20s%-20s%-10s\n", "Room number", "name", "Party count", "Payment Recieved", "check out");
-			while (rs.next()) 
-			{
-				// int id = rs.getInt("rId");
-				String name = rs.getString("Guest.Name");
-				int rNum = rs.getInt("roomNum");
-				int partyCount = rs.getInt("partyCount");
-				boolean paymentReceived = rs.getBoolean("paymentReceived");
-				Date checkOut = rs.getDate("Reservations.checkOut");
-				System.out.printf("%-15s%-30s%-20s%-20s%-10s\n", rNum + "", name + "", partyCount + "", paymentReceived + "", checkOut.toString());
-
-			}
-		}catch(SQLException e)
-		{
-			System.out.println(e.getMessage());
-		} finally{
-			rs.close();
-			statement.close();
-			
-		}
-
-
-
-
-
-	}
-
-	public static void requestCar() throws SQLException 
-	{
-		String sql = "UPDATE valet SET requested = ? WHERE gID = ?";
-		System.out.println("Please enter your email: ");
-		String email = in.nextLine();
-		System.out.println("Please enter your room Number: ");
-		int roomNum = Integer.parseInt(in.nextLine().trim());
-		int guestID = getGuestId(roomNum, email);
-		PreparedStatement pstmt = null;
-		int result = 0;
-
-		try {
-
-			pstmt = connection.prepareStatement(sql);
-			pstmt.setBoolean(1, true);
-			pstmt.setInt(2, guestID);
-			result = pstmt.executeUpdate();
-
-		} catch (SQLException e) {
-			e.printStackTrace();
-		} finally {
-			pstmt.close();
-		}
-
-		String msg = result == 1 ? "Your car has been requested, go to the lobby to get the keys." : "Something went wrong please try again";
-		System.out.println(msg);
-
-
-
-	}
-
-	public static void wakeUpCall() throws SQLException 
-	{
-
-		System.out.println("Please enter your email: ");
-		String email = in.nextLine();
-		System.out.println("Please enter your room Number: ");
-		int roomNum = Integer.parseInt(in.nextLine().trim());
-		int guestID = getGuestId(roomNum, email);
-		System.out.println("Please enter the time you will liked to be waked up on (HH:MM)(In military time):");
-		String time = in.nextLine();
-		WakeUpCall wuc = new WakeUpCall(guestID, time);
-		int result = addWakeupCall(wuc);
-		String msg =
-				result == 1
-				? "You have successfully requested a wake up Call!"
-						: "Something went wrong! Try again";
-		System.out.println(msg);
-
-
-	}
-
-
-	public static int addWakeupCall(WakeUpCall wuc) throws SQLException {
-		PreparedStatement pstmt = null;
-		int result = 0;
-		try {
-			String addGuest =
-					"INSERT INTO WakeupCall (gId, Time) VALUES (? , ?);";
-
-			pstmt = connection.prepareStatement(addGuest);
-			pstmt.setInt(1, wuc.getgID());
-			pstmt.setString(2, wuc.getTime());
-
-			result = pstmt.executeUpdate();
-
-		} catch (SQLException e) {
-			e.printStackTrace();
-		} finally {
-			pstmt.close();
-		}
-		return result;
-	}
-
-	public static void carValet() throws SQLException
-	{
-		System.out.println("Please enter the guest Id of the customer:");
-		int gID = Integer.parseInt(in.nextLine().trim());
-		System.out.println("Please enter the name of the car to be added:");
-		String car = in.nextLine();
-		Valet v = new Valet(car, gID, false, -1);
-		int result = addCar(v);
-		String msg = result == 1
-				? "The car has been succesfully added to the valet!"
-						: "Something went wrong! Try again";
-		System.out.println(msg);
-
-	}
-
-	public static int addCar(Valet v) throws SQLException
-	{
-		PreparedStatement pstmt = null;
-		int result = 0;
-		try {
-			String addCar = "INSERT INTO Valet (gID, Car, Requested) VALUES (?, ? , ?);";
-			pstmt = connection.prepareStatement(addCar);
-			pstmt.setInt(1, v.getgID());
-			pstmt.setString(2, v.getCar());
-			pstmt.setBoolean(3, false);
-			result = pstmt.executeUpdate();
-
-		} catch (SQLException e) {
-			e.printStackTrace();
-		} finally {
-			pstmt.close();
-		}
-
-		return result;
-	}
+  	
 }

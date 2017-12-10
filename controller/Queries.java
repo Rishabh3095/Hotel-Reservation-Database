@@ -17,8 +17,6 @@ public class Queries {
 	
 	  static Scanner in = new Scanner(System.in);
 	  static Connection connection = null;
-	  private static PreparedStatement preparedStatement = null;
-	  private static Statement statement = null;
 
 	  public static int addPayment(Payment res) throws SQLException {
 		    PreparedStatement pstmt = null;
