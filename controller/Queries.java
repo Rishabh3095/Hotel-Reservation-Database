@@ -5,6 +5,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.HashSet;
 import java.util.Scanner;
 
 import model.Employee;
@@ -100,8 +101,6 @@ public class Queries {
 		          System.out.print(roomNum + " " + Type + " " + " " + pric + " " + bl);
 		          System.out.println(" ");
 		        }
-
-		      
 		    } catch (SQLException e) {
 		      e.printStackTrace();
 		    } finally {
@@ -109,26 +108,62 @@ public class Queries {
 		    }
 	  }
 	  
-	  public static int markRoomUnav() throws SQLException {
-		  PreparedStatement pstmt = null;
-		  Scanner ini = new Scanner(System.in);
-		  System.out.println("Enter the room ID to make it unavailable to guests: ");
-		  int ro = ini.nextInt();
-		  Room r = new Room(ro);
-		    int result = 0;
+	  public static HashSet<Integer> checkUnavailable() throws SQLException {
+
+		    HashSet<Integer> set = new HashSet<>();
+
+		    Statement statement = connection.createStatement();
+		    String getRooms = "SELECT * from UNROOM";
+		    
 		    try {
-		      String roomInfo =
-		          "INSERT INTO UNROOM (rId) VALUE (?);";
-
-		      pstmt = connection.prepareStatement(roomInfo);
-		      pstmt.setInt(1, r.getrId());
-		      result = pstmt.executeUpdate();
-
+		    	ResultSet rs = statement.executeQuery(getRooms);
+		        System.out.printf("%-10s%-30s%-20s%-25s%n", "rId");
+		        
+		        while (rs.next()) {
+		          // int id = rs.getInt("rId");
+		          int rNum = rs.getInt("rId");
+		          set.add(rNum);
+		          System.out.printf("%-10s%-30s%-20s%-25s%n", rNum + " ");
+		        }
 		    } catch (SQLException e) {
 		      e.printStackTrace();
 		    } finally {
-		      pstmt.close();
 		    }
+		    return set;
+		  }
+
+	  
+	  public static int markRoomUnav() throws SQLException {
+		  PreparedStatement pstmt = null;
+		  Scanner ini = new Scanner(System.in);
+		    HashSet<Integer> set1 = checkUnavailable();
+		    
+		  System.out.println("Enter the room ID to make it unavailable to guests: ");
+		  int ro = ini.nextInt();
+		    int result = 0;
+		  
+		  if(set1.contains(ro))
+			  {
+			  Room r = new Room(ro);
+			    try {
+			      String roomInfo =
+			          "INSERT INTO UNROOM (rId) VALUE (?);";
+
+			      pstmt = connection.prepareStatement(roomInfo);
+			      pstmt.setInt(1, r.getrId());
+			      result = pstmt.executeUpdate();
+
+			    } catch (SQLException e) {
+			      e.printStackTrace();
+			    } finally {
+			      pstmt.close();
+			    }
+			  }
+		  else
+		  {
+			  System.out.println("Invalid choice. Please select some other room.");
+		  }
+		  
 		    return result;
 	  }
 	  
