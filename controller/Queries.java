@@ -109,15 +109,19 @@ public class Queries {
 		    }
 	  }
 	  
-	  public static int markRoomUnav(Room rm) throws SQLException {
+	  public static int markRoomUnav() throws SQLException {
 		  PreparedStatement pstmt = null;
+		  Scanner ini = new Scanner(System.in);
+		  System.out.println("Enter the room ID to make it unavailable to guests: ");
+		  int ro = ini.nextInt();
+		  Room r = new Room(ro);
 		    int result = 0;
 		    try {
 		      String roomInfo =
 		          "INSERT INTO UNROOM (rId) VALUE (?);";
 
 		      pstmt = connection.prepareStatement(roomInfo);
-		      pstmt.setInt(1, rm.getrId());
+		      pstmt.setInt(1, r.getrId());
 		      result = pstmt.executeUpdate();
 
 		    } catch (SQLException e) {
