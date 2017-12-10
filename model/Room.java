@@ -18,6 +18,11 @@ public class Room {
 		this.clean = clean;
 		this.smoke = smoke;
 	}
+	
+	public Room(int rId)
+	{
+		this.rId = rId;
+	}
 
 	public int getrId() {
 		return rId;

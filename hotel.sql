@@ -4,6 +4,7 @@ DROP SCHEMA IF EXISTS Hotel;
 CREATE SCHEMA Hotel;
 USE Hotel; 
 
+
 DROP TABLE IF EXISTS EMPLOYEE;
 CREATE TABLE EMPLOYEE
 (eID int NOT NULL AUTO_INCREMENT,
@@ -23,6 +24,14 @@ Type VARCHAR(20),
 Price float,
 Cleaned BOOLEAN ,
 Smoke BOOLEAN ,
+PRIMARY KEY (rID)
+);
+
+
+DROP TABLE IF EXISTS UNROOM;
+
+CREATE TABLE UNROOM
+(rID int NOT NULL AUTO_INCREMENT,
 PRIMARY KEY (rID)
 );
 
@@ -117,7 +126,6 @@ PRIMARY KEY(parkingNum, gID)
 );
 
 
-
 #update payment status in Reservations table after insert in payment table
 CREATE Trigger updatePaymentStatus
 After Insert on Payment
@@ -149,6 +157,6 @@ END//
 
 
 
-LOAD DATA LOCAL INFILE '/Users/gurpreet/Documents/workspace/HotelReservationDb/src/data/employees.txt' INTO TABLE EMPLOYEE;
-LOAD DATA LOCAL INFILE '/Users/gurpreet/Documents/workspace/HotelReservationDb/src/data/room.txt' INTO TABLE ROOM;
+LOAD DATA LOCAL INFILE 'C:\\My Stuff\\Software Projects\\Java\\javaSpace\\HotelReservationDB\\src\\data\\employees.txt' INTO TABLE EMPLOYEE;
+LOAD DATA LOCAL INFILE 'C:\\My Stuff\\Software Projects\\Java\\javaSpace\\HotelReservationDB\\src\\data\\room.txt' INTO TABLE ROOM;
 
