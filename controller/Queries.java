@@ -96,7 +96,7 @@ public class Queries {
 		          String Type = result.getString("Type");
 		          Float pric = result.getFloat("price");
 		          boolean bl = result.getBoolean("smoke");
-		          System.out.print(roomNum + " " + Type + " " + " " + pric + " " + bl);
+				System.out.printf("%-10s%-30s%-20s%-25s%n", roomNum + "", Type + "", pric + "", bl + "");
 		          System.out.println(" ");
 		        }
 		    } catch (SQLException e) {
@@ -115,18 +115,20 @@ public class Queries {
 		    
 		    try {
 		    	ResultSet rs = statement.executeQuery(getRooms);
-		        System.out.printf("%-10s%-30s%-20s%-25s%n", "rId");
+		        System.out.printf("%n", "rId");
 		        
 		        while (rs.next()) {
 		          // int id = rs.getInt("rId");
 		          int rNum = rs.getInt("rId");
 		          set.add(rNum);
-		          System.out.printf("%-10s%-30s%-20s%-25s%n", rNum + " ");
+		          System.out.printf("%n", rNum + " ");
 		        }
 		    } catch (SQLException e) {
 		      e.printStackTrace();
 		    } finally {
 		    }
+		    
+		    System.out.println("List of rooms already marked unavailable = " + set);
 		    return set;
 		  }
 
@@ -134,14 +136,20 @@ public class Queries {
 	  public static int markRoomUnav() throws SQLException {
 		  PreparedStatement pstmt = null;
 		  Scanner ini = new Scanner(System.in);
+		  
 		    HashSet<Integer> set1 = checkUnavailable();
 		    
 		  System.out.println("Enter the room ID to make it unavailable to guests: ");
 		  int ro = ini.nextInt();
-		    int result = 0;
+		  
+		  int result = 0;
 		  
 		  if(set1.contains(ro))
 			  {
+			  System.out.println("Invalid choice. Please select some other room. Try Again");
+			  }
+		  else
+		  {
 			  Room r = new Room(ro);
 			    try {
 			      String roomInfo =
@@ -156,36 +164,34 @@ public class Queries {
 			    } finally {
 			      pstmt.close();
 			    }
-			  }
-		  else
-		  {
-			  System.out.println("Invalid choice. Please select some other room.");
 		  }
-		  
 		    return result;
 	  }
 	  
 	  public static void guestInfo() throws SQLException {
-		  
 		    PreparedStatement pstmt = null;
 		    ResultSet result = null;
 		    try {
 		      String guestInfo =
-		          "Select (*) from (Payment JOIN Guest);";
+		          "Select * from (Payment JOIN Guest);";
 
 		      pstmt = connection.prepareStatement(guestInfo);
 		      result = pstmt.executeQuery();
 		      
 		      while (result.next()) {
+		    	  
+		    	  int pid = result.getInt("pID");
+		    	  String rNum = result.getString("RNum");
 		    	  int gid = result.getInt("gId");
-		    	  String name = result.getString("Name");
+		    	  String name = result.getString("NAME");
 		    	  int cardnumber = result.getInt("CardNumber");
 		    	  int expiration = result.getInt("Expiration");
-		          System.out.print(gid + " " + name + " " + " " + cardnumber+ " " + expiration);
+		    	  int cvc = result.getInt("CVC");
+		    	  int amountDue = result.getInt("AmountDue");
+
+		          System.out.print(pid + " " + rNum + " " + gid + " " + name + " " + cardnumber + " " + expiration + " " + cvc + " " + amountDue);
 		          System.out.println(" ");
 		        }
-
-
 		    } catch (SQLException e) {
 		      e.printStackTrace();
 		    } finally {
