@@ -1,0 +1,10 @@
+1. Change path to .txt files (file in data directory) in hotel.sql script at the very bottom to your local path.
+
+2. Import hotel.sql script in database:
+	
+	mysql -u root -p hotel < hotel.sql
+
+4. Change username and password in db.properties to your database username and password
+
+3. Run LaunchApp.java to launch app.
+
