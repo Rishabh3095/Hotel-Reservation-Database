@@ -1,5 +1,4 @@
 package model;
-
 public class Employee {
 	private int eId;
 

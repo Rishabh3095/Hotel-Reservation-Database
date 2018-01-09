@@ -1,5 +1,4 @@
 package model;
-
 public class UnRoom {
 	
 	private int rId;

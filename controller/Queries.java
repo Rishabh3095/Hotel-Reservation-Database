@@ -8,11 +8,9 @@ import java.sql.Statement;
 import java.util.HashSet;
 import java.util.Scanner;
 
-import model.Employee;
-import model.Guest;
 import model.Payment;
 import model.Room;
-import util.ConnectDB;
+
 
 public class Queries {
 	
@@ -45,40 +43,7 @@ public class Queries {
 		    return result;
 	  }
 	  	  
-	  public static void employerLogin() throws SQLException
-	  {
-		  System.out.println("Please enter the employer ID: ");
-		  
-		  Scanner ini = new Scanner(System.in);
-		  int eId = ini.nextInt();
-		  
-		  System.out.println("Please enter the password: ");
-		  String pass = ini.next();
-		  
-		  PreparedStatement pstmt = null;
-		  ResultSet result = null;
-		  
-		    try {
-		        String signIn =
-		                "SELECT eId, Password from EMPLOYEE where eId = (?) and Password = (?);";
-
-		      pstmt = connection.prepareStatement(signIn);
-		      pstmt.setInt(1, eId);
-		      pstmt.setString(2, pass);
-		      result = pstmt.executeQuery();
-		      
-		      while (result.next()) {
-		          int eI = result.getInt("eId");
-		          String pas = result.getString("Password");
-		          System.out.print(eI + " " + pas + " ");
-		          System.out.println(" ");
-		        }
-		    } catch (SQLException e) {
-		      e.printStackTrace();
-		    } finally {
-		      pstmt.close();
-		    }
-	  }
+	  
 	  
 	  public static void averageRoomPrice() throws SQLException
 	  {
@@ -173,7 +138,7 @@ public class Queries {
 		    ResultSet result = null;
 		    try {
 		      String guestInfo =
-		          "Select * from (Payment JOIN Guest);";
+		          "Select * from (Payment NATURAL JOIN GUEST);";
 
 		      pstmt = connection.prepareStatement(guestInfo);
 		      result = pstmt.executeQuery();
@@ -198,4 +163,51 @@ public class Queries {
 		      pstmt.close();
 		    }
 		  }
+
+
+		  public static boolean employerLogin() throws SQLException
+      {
+          boolean b = false;
+          System.out.println("Please enter the employer ID: ");
+          
+          Scanner ini = new Scanner(System.in);
+          int eId = ini.nextInt();
+          
+          System.out.println("Please enter the password: ");
+          String pass = ini.next();
+          
+          PreparedStatement pstmt = null;
+          ResultSet result = null;
+          
+            try {
+                String signIn =
+                        "SELECT eId, Password from EMPLOYEE where eId = (?) and Password = (?);";
+
+              pstmt = connection.prepareStatement(signIn);
+              pstmt.setInt(1, eId);
+              pstmt.setString(2, pass);
+              result = pstmt.executeQuery();
+
+                if(result.last())
+                {
+                    b = true;
+                }
+                else {
+                    b = false;
+                }
+
+              while (result.next()) {
+                  int eI = result.getInt("eId");
+                  String pas = result.getString("Password");
+                  System.out.print(eI + " " + pas + " ");
+                  System.out.println(" ");
+                }
+            } catch (SQLException e) {
+              e.printStackTrace();
+            } finally {
+              pstmt.close();
+            }
+            return b;
+      }
+
 	}
